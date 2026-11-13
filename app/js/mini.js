@@ -11,10 +11,14 @@
         $("cartao").className = st.status || "parado";
         $("ic").innerHTML = st.status === "rodando" ? PAUSA : PLAY;
         $("alterna").title = st.status === "rodando" ? "Pausar" : st.status === "pausado" ? "Continuar" : "Iniciar";
+        $("finaliza").hidden = !(st.status === "rodando" || st.status === "pausado" && !st.pausaFoco);
+        $("pula").hidden = !(st.status === "parado" && st.disc);
     }
     api.aoMudar(aplica);
     api.ler().then(aplica).catch((() => {}));
     $("alterna").onclick = () => api.comando("alternar");
+    $("finaliza").onclick = () => api.comando("finalizar");
+    $("pula").onclick = () => api.comando("pular");
     $("menu").onclick = () => api.menu();
     $("fecha").onclick = () => api.fechar();
     $("txt").ondblclick = () => api.comando("abrir");

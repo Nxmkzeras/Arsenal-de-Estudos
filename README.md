@@ -43,7 +43,12 @@ Você não precisa confiar em mim: dá para conferir.
 
 - Nada seu é enviado para a internet.
 - A única conexão é uma consulta pública ao GitHub para saber se há versão nova (dá para desligar em Ajustes).
+- A tela "Enviar feedback" não envia nada sozinha: ela abre o GitHub no seu navegador e só publica se você confirmar.
 - Os dados ficam em `%APPDATA%\Arsenal de Estudos - Publico`, com uma cópia de segurança em disco. Faça também o backup em Ajustes.
+
+## Sugestões e problemas
+
+Use **Enviar feedback** no menu do aplicativo, ou abra uma [issue](https://github.com/Nxmkzeras/Arsenal-de-Estudos/issues/new) aqui no GitHub.
 
 ## Apoie o projeto
 

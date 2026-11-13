@@ -21,6 +21,18 @@
             App.tema(document.documentElement.dataset.tema === "escuro" ? "claro" : "escuro");
         },
         finalizarSessao: () => Cronometro.finalizar(),
+        pularMateria() {
+            if (Store.s.cron.status !== "parado") return U.toast("Finalize a sessão aberta antes de pular a matéria.", "err");
+            const c = Store.s.cron;
+            if (c.discId && c.fixa) return U.toast('Esta matéria está travada em "Sessão de estudo". Desligue "Manter esta matéria" para pular.', "err");
+            const id = D.pularDaVez();
+            if (!id) return U.toast("Não há matéria da vez para pular.", "err");
+            const prox = D.materiaDaVez();
+            U.toast(D.nomeDisc(id, false) + " pulada nesta volta" + (prox && prox !== id ? ". Agora: " + D.nomeDisc(prox, false) : "") + ".", "", {
+                acao: "Desfazer",
+                fn: () => D.desfazerPulo(id)
+            });
+        },
         cronometro() {
             App.nav("painel", {
                 ir: "cronometro",
@@ -60,7 +72,15 @@
     }
     function desenhaMenu() {
         clear(elSide);
-        const cs = D.cicloEstado(), meta = Store.s.config.metaDiariaMin, min = D.minHojeVivo();
+        const cs0 = D.cicloEstado(), meta = Store.s.config.metaDiariaMin, min = D.minHojeVivo();
+        const vez = D.materiaDaVez(), slVez = vez && (cs0.slots.find((sl => sl.discId === vez && sl.feito < sl.alvo)) || cs0.slots.find((sl => sl.discId === vez)));
+        const cs = {
+            atual: vez ? {
+                discId: vez,
+                alvo: slVez ? slVez.alvo : cs0.atual ? cs0.atual.alvo : 60,
+                feitoSlot: slVez ? slVez.feito : 0
+            } : null
+        };
         const ed = D.edital().ed;
         elSide.appendChild(h("a", {
             class: "brand",
@@ -99,10 +119,10 @@
                 fontWeight: 700,
                 fontSize: "14px"
             }
-        }, D.nomeDisc(cs.atual.discId)), D.assuntoDaVez() ? h("div", {
+        }, D.nomeDisc(cs.atual.discId)), D.modoAssunto() && D.proximoAssunto(cs.atual.discId) ? h("div", {
             class: "tiny ellipsis",
-            title: D.rotuloTopico(D.assuntoDaVez())
-        }, D.rotuloTopico(D.assuntoDaVez())) : null, h("div", {
+            title: D.rotuloTopico(D.proximoAssunto(cs.atual.discId))
+        }, D.rotuloTopico(D.proximoAssunto(cs.atual.discId))) : null, h("div", {
             class: "tiny muted num",
             id: "side-agora",
             dataset: {
@@ -790,6 +810,7 @@
             arsenalExe.mini.estado({
                 txt: fmtClock(Math.max(0, f.pausaFim - Date.now()) / 1e3),
                 status: "pausado",
+                pausaFoco: true,
                 modo: "regressivo",
                 disc: "Pausa · rodada " + f.rodada + " de " + f.r + " feita"
             });
@@ -1000,6 +1021,15 @@
                         V.refresh();
                     }));
                     arsenalExe.mini.aoComando((cmd => {
+                        if (cmd === "finalizar") {
+                            if (Store.s.cron.status !== "parado") App.finalizarSessao();
+                            return;
+                        }
+                        if (cmd === "pular") {
+                            App.pularMateria();
+                            empurraMini(Store.s.cron);
+                            return;
+                        }
                         if (cmd !== "alternar") return;
                         const st = Store.s.cron.status;
                         if (st === "parado" && window.Foco && Foco.emPausa) {

@@ -356,10 +356,25 @@
                 x: x,
                 j: j,
                 pos: pos,
-                chave: Math.round((j + off) / k * 1e9)
+                chave: Math.round((off + j / k) * 1e9)
             });
         }));
         apar.sort(((a, b) => a.chave - b.chave || a.j - b.j || a.pos - b.pos));
+        for (let passo = 0; passo < 3; passo++) {
+            for (let t = 1; t < apar.length; t++) {
+                if (apar[t].x !== apar[t - 1].x) continue;
+                const m = apar.findIndex(((a, q) => q > t && a.x !== apar[t].x));
+                if (m < 0) break;
+                apar.splice(t, 0, apar.splice(m, 1)[0]);
+            }
+            const L = apar.length, ult = L > 2 ? apar[L - 1] : null;
+            if (ult && ult.x === apar[0].x) {
+                for (let p = L - 2; p >= 1; p--) if (apar[p - 1].x !== ult.x && apar[p].x !== ult.x) {
+                    apar.splice(p, 0, apar.pop());
+                    break;
+                }
+            }
+        }
         return apar;
     }
     const modoAssunto = () => S().config.modoEstudo === "assunto";
@@ -500,13 +515,23 @@
     function montarBlocos(metaMin, existentes) {
         const blocos = (existentes || []).map((b => Object.assign({}, b)));
         let soma = blocos.reduce(((a, b) => a + b.min), 0);
-        const fila = filaSlots();
+        let fila = filaSlots();
         if (!fila.length) return blocos;
+        const resto = feitoHoje(), cobre = {};
+        blocos.forEach((b => {
+            const r = resto[b.discId] || 0, t = Math.min(b.min, r);
+            resto[b.discId] = r - t;
+            if (t < b.min - .5) cobre[b.discId] = (cobre[b.discId] || 0) + 1;
+        }));
+        fila = fila.filter((sl => {
+            if (cobre[sl.discId] > 0 && sl.feito < sl.alvo) {
+                cobre[sl.discId]--;
+                return false;
+            }
+            return true;
+        }));
+        if (!fila.length) fila = filaSlots();
         let i = 0;
-        if (blocos.length) {
-            const u = fila.findIndex((sl => sl.discId === blocos[blocos.length - 1].discId));
-            i = u >= 0 ? u + 1 : 0;
-        }
         const usados = new Set;
         for (let guarda = 0; metaMin - soma >= 1 && guarda < 200; guarda++, i++) {
             const k = i % fila.length, sl = fila[k], primeira = !usados.has(k);
@@ -525,7 +550,7 @@
     }
     function assinaturaPlano(s) {
         const c = s.ciclo;
-        return JSON.stringify([ s.config.metaDiariaMin, c.itens.map((i => [ i.discId, +i.alvo || 0, pesoDe(i), !!i.ativo ])), c.fixada || "", c.pulou || [], c.rodadas || 1, c.voltaIniEm || 0 ]);
+        return JSON.stringify([ s.config.metaDiariaMin, c.itens.map((i => [ i.discId, +i.alvo || 0, pesoDe(i), !!i.ativo ])), c.fixada || "", c.pulou || [], c.rodadas || 1, c.voltaIniEm || 0, "ordem2" ]);
     }
     function feitoHoje() {
         const s = S(), hoje = ymd(), c = s.cron, feito = {};
@@ -669,7 +694,8 @@
                 if (sg.feito < sg.min) break;
             }
         }
-        const proximo = segs.find((sg => !sg.extra && sg.feito < sg.min - .5)) || null;
+        const livres = segs.filter((sg => !sg.extra && sg.feito < sg.min - .5)), pul = s.ciclo.pulou || [], vezC = plano.manual ? null : cicloAtual();
+        const proximo = vezC && livres.find((sg => sg.discId === vezC)) || livres.find((sg => !pul.includes(sg.discId))) || livres[0] || null;
         return {
             segs: segs,
             total: total,
@@ -716,6 +742,37 @@
         const e = edital(), c = S().ciclo;
         if (!c.itens.length || c.itens.some((i => !e.disc[i.discId]))) recomecarCiclo();
     }
+    function materiaDaVez() {
+        const s = S(), c = s.cron;
+        if (c.status !== "parado") return c.discSessao || c.discId || null;
+        if (c.discId) return c.discId;
+        if (s.dia && s.dia.manual && s.dia.data === ymd()) {
+            const p = diaEstado().proximo;
+            if (p && p.discId) return p.discId;
+        }
+        return cicloAtual();
+    }
+    function pularDaVez() {
+        const s = S(), c = s.cron;
+        if (c.status !== "parado") return null;
+        const id = materiaDaVez();
+        if (!id) return null;
+        if (c.discId === id && c.fixa) return null;
+        Store.mut((st => {
+            if (st.cron.discId === id) {
+                st.cron.discId = null;
+                st.cron.topicoId = null;
+            }
+            if (!st.ciclo.pulou.includes(id)) st.ciclo.pulou.push(id);
+            if (st.ciclo.fixada === id) st.ciclo.fixada = null;
+        }));
+        return id;
+    }
+    function desfazerPulo(id) {
+        Store.mut((st => {
+            st.ciclo.pulou = st.ciclo.pulou.filter((x => x !== id));
+        }));
+    }
     const Cron = {
         get c() {
             return S().cron;
@@ -725,10 +782,10 @@
             return c.acumMs + (c.status === "rodando" ? Date.now() - c.iniMs : 0);
         },
         discEfetiva() {
-            const c = this.c;
-            return c.fixa || c.discId ? c.discId : cicloAtual();
+            return materiaDaVez();
         },
         iniciar() {
+            const vez = this.c.status === "parado" ? materiaDaVez() : null;
             Store.mut((s => {
                 const c = s.cron;
                 if (c.status === "rodando") return;
@@ -736,7 +793,7 @@
                 if (c.status === "parado") {
                     c.acumMs = 0;
                     c.inicioMs = agora;
-                    c.discSessao = c.discId || (c.fixa ? null : cicloAtual());
+                    c.discSessao = c.discId || (c.fixa ? null : vez);
                     if (modoAssunto() && !c.topicoId && c.discSessao) c.topicoId = proximoAssunto(c.discSessao);
                 }
                 c.iniMs = agora;
@@ -1291,6 +1348,9 @@
         assuntoDaVez: assuntoDaVez,
         editalZerado: editalZerado,
         sigla: sigla,
+        materiaDaVez: materiaDaVez,
+        pularDaVez: pularDaVez,
+        desfazerPulo: desfazerPulo,
         recomecarCiclo: recomecarCiclo,
         trocarEdital: trocarEdital,
         gerarCiclo: gerarCiclo,

@@ -2,6 +2,23 @@
 
 Cada versão tem uma seção "## <número>". O texto da seção da versão publicada é o que o próprio aplicativo mostra ao avisar da atualização.
 
+## 1.1.0
+
+### Novidades
+- **Enviar feedback:** nova tela no menu para mandar sugestões, problemas e elogios. Ela abre a página do projeto no GitHub já preenchida; você confere e envia. Também dá para copiar o texto e mandar por onde preferir.
+- **Pular matéria:** botão ao lado do play no Painel e no cronômetro fixo da tela. A matéria fica para a próxima volta do ciclo, com opção de desfazer.
+- **Finalizar no cronômetro fixo:** o cronômetro no canto da tela ganhou o botão de finalizar e salvar a sessão.
+- **Finalizar mais rápido:** a janela de salvar a sessão já vem com a matéria e o assunto preenchidos.
+
+### Correções
+- O **ciclo de estudos** agora respeita a ordem da lista: uma matéria que você desce na lista vem depois de verdade, mesmo se ela aparecer 2 ou 3 vezes na volta. As repetições ficam espaçadas, nunca seguidas.
+- "Agora" no menu, o play do Painel, o cronômetro fixo e "Estudar agora" mostram sempre a **mesma matéria** (antes podiam mostrar matérias diferentes).
+- O plano de hoje começa na matéria da vez e não some com ela do dia.
+- O cronômetro fixo que abria junto com o programa ficava sem mostrar o tempo e a matéria até ser reaberto.
+
+### Sons
+- Novos nomes: **Acústico da madrugada**, **Tokyo Lofi Guitar** e **Tokyo Night Drive**.
+
 ## 1.0.0
 
 Primeira versão pública.

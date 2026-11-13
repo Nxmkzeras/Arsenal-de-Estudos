@@ -314,6 +314,7 @@
         const dados = D.Cron.dados();
         if (Store.s.cron.status === "parado") return;
         const e = D.edital();
+        if (!dados.topicoId && dados.discId) dados.topicoId = D.proximoAssunto(dados.discId) || null;
         const d = h("select", null, h("option", {
             value: ""
         }, "(sem matéria)"), e.discs.map((x => h("option", {

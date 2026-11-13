@@ -359,18 +359,26 @@
             if (l) l.classList.toggle("foco", on);
         }
         function acoes() {
-            const st = est.status, prox = est.proximo;
-            const k = st + "|" + (prox ? prox.discId : "");
+            const st = est.status, vez = st === "parado" ? D.materiaDaVez() : null;
+            const k = st + "|" + (vez || "");
             if (k === chaveAcoes) return;
             chaveAcoes = k;
             U.clear(elAcoes);
             if (st === "parado") {
                 elAcoes.appendChild(h("button", {
                     class: "ac-play",
-                    title: prox ? "Começar " + nomeDe(prox.discId) : "Começar a estudar",
-                    "aria-label": prox ? "Começar " + nomeDe(prox.discId) : "Começar a estudar",
-                    onclick: () => comecar(prox ? prox.discId : null)
+                    title: vez ? "Começar " + nomeDe(vez) : "Começar a estudar",
+                    "aria-label": vez ? "Começar " + nomeDe(vez) : "Começar a estudar",
+                    onclick: () => {
+                        if (Store.s.cron.discId) D.Cron.iniciar(); else comecar(null);
+                    }
                 }, icon("play")));
+                if (vez) elAcoes.appendChild(h("button", {
+                    class: "ac-mini",
+                    title: "Pular " + nomeDe(vez) + " nesta volta do ciclo",
+                    "aria-label": "Pular " + nomeDe(vez),
+                    onclick: () => App.pularMateria()
+                }, icon("skip", "sm")));
             } else {
                 elAcoes.appendChild(h("button", {
                     class: "ac-mini",

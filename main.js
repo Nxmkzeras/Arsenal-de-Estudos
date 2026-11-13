@@ -1021,7 +1021,7 @@ function abrirMini() {
         mini.showInactive();
         return;
     }
-    const W = 218, H = 78;
+    const W = 252, H = 78;
     let pos = posicaoMini(W, H);
     const p0 = cfg.miniPos;
     if (p0 && typeof p0.x === "number" && screen.getAllDisplays().some((d => p0.x >= d.workArea.x - 20 && p0.x + W <= d.workArea.x + d.workArea.width + 20 && p0.y >= d.workArea.y - 20 && p0.y + H <= d.workArea.y + d.workArea.height + 20))) pos = p0;
@@ -1099,15 +1099,19 @@ ipcMain.on("mini:estado", ((ev, st) => {
             txt: String(st.txt || "").slice(0, 12),
             status: String(st.status || ""),
             modo: String(st.modo || ""),
-            disc: String(st.disc || "").slice(0, 60)
+            disc: String(st.disc || "").slice(0, 60),
+            pausaFoco: !!st.pausaFoco
         };
         if (miniAberta()) mini.webContents.send("mini:estado", estadoMini);
     }
 }));
 
 ipcMain.on("mini:cmd", ((ev, c) => {
-    if (janela && !janela.isDestroyed() && /^(alternar|abrir)$/.test(String(c))) {
-        if (c === "abrir") mostrar("#/painel?ir=cronometro&n=" + Date.now() % 1e6); else janela.webContents.send("mini:cmd", c);
+    if (janela && !janela.isDestroyed() && /^(alternar|abrir|finalizar|pular)$/.test(String(c))) {
+        if (c === "abrir") mostrar("#/painel?ir=cronometro&n=" + Date.now() % 1e6); else {
+            if (c === "finalizar") mostrar("");
+            janela.webContents.send("mini:cmd", c);
+        }
     }
 }));
 
@@ -1187,6 +1191,7 @@ function criarJanela(oculta) {
     janela.once("ready-to-show", (() => {
         if (!oculta) janela.show();
     }));
+    janela.webContents.on("did-finish-load", (() => avisaMini()));
     janela.loadFile(path.join(__dirname, "app", "index.html"));
     janela.webContents.setWindowOpenHandler((({url: url}) => {
         if (/^https?:\/\//i.test(url)) shell.openExternal(url);

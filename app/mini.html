@@ -11,6 +11,9 @@
   .rodando #ponto { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.25); }
   .pausado #ponto { background: #f5b301; }
   #disc { grid-column: 1; font-size: 12px; color: #aeb3ba; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+  button.sec { width: 30px; height: 30px; background: #2c3036; color: #f0f0eb; }
+  button.sec[hidden] { display: none; }
+  button.sec svg { width: 14px; height: 14px; }
   #acoes { grid-column: 2; grid-row: 1 / span 2; display: flex; align-items: center; gap: 4px; -webkit-app-region: no-drag; }
   button { all: unset; cursor: pointer; display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #f5b301; color: #16181b; }
   button:hover { filter: brightness(1.1); }
@@ -26,6 +29,8 @@
   <div id="tempo"><i id="ponto"></i><span id="txt">00:00</span></div>
   <div id="disc"></div>
   <div id="acoes">
+    <button class="sec" id="finaliza" hidden title="Finalizar e salvar a sessão" aria-label="Finalizar e salvar a sessão"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+    <button class="sec" id="pula" hidden title="Pular esta matéria nesta volta do ciclo" aria-label="Pular a matéria da vez"><svg viewBox="0 0 24 24"><polygon points="5 5 14 12 5 19"/><rect x="16" y="5" width="3" height="14"/></svg></button>
     <button id="alterna" title="Iniciar / pausar" aria-label="Iniciar ou pausar o cronômetro"><svg id="ic" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20"/></svg></button>
     <div class="col">
       <button class="peq" id="menu" title="Opções" aria-label="Opções do cronômetro fixo"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button>

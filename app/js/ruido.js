@@ -360,20 +360,20 @@
     }, {
         id: "lofi-piano",
         grupo: "Lofi",
-        nome: "Piano de madrugada",
-        desc: "Piano acústico de verdade, contrabaixo e bateria macia; sem sopros e sem sintetizador.",
+        nome: "Acústico da madrugada",
+        desc: "Instrumentos acústicos de verdade (piano, contrabaixo e bateria macia) num clima calmo de madrugada; sem sopros e sem sintetizador.",
         nivel: 1.25
     }, {
         id: "lofi-tokyo-1",
         grupo: "Lofi",
-        nome: "Tóquio calmo I",
-        desc: "Lofi jazz lento de noite na cidade grande, a 84 batidas por minuto.",
+        nome: "Tokyo Lofi Guitar",
+        desc: "Lofi com guitarra macia, de noite na cidade grande, a 84 batidas por minuto.",
         nivel: 1.25
     }, {
         id: "lofi-tokyo-2",
         grupo: "Lofi",
-        nome: "Tóquio calmo II",
-        desc: "Segunda noite de Tóquio: mais suave e espaçada, no mesmo ritmo lento.",
+        nome: "Tokyo Night Drive",
+        desc: "Para dirigir de madrugada por Tóquio: lofi suave e espaçado, no mesmo ritmo lento.",
         nivel: 1.25
     }, {
         id: "ruidoBranco",
