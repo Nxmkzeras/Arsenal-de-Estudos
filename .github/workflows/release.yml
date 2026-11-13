@@ -1,0 +1,98 @@
+name: Publicar versão
+
+# Para lançar: aumente a "version" do package.json, escreva a seção "## <versão>" no CHANGELOG.md, e crie a etiqueta:
+#   git tag v1.0.0 && git push origin v1.0.0
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  publicar:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Conferir a versão
+        id: ver
+        shell: pwsh
+        run: |
+          $v = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ("v$v" -ne "${{ github.ref_name }}") { throw "A etiqueta ${{ github.ref_name }} não bate com a versão $v do package.json" }
+          "versao=$v" >> $env:GITHUB_OUTPUT
+          $c = Get-Content CHANGELOG.md -Raw -Encoding utf8
+          $m = [regex]::Match($c, "(?ms)^## $([regex]::Escape($v))\b.*?(?=^## |\z)")
+          if (-not $m.Success) { throw "O CHANGELOG.md não tem a seção '## $v'" }
+          $m.Value.Trim() | Set-Content notas.md -Encoding utf8
+
+      - name: Instalar o compilador
+        run: npm install --no-save @electron/packager@20.3.0
+
+      - name: Compilar o programa
+        shell: pwsh
+        run: |
+          npx electron-packager . "Arsenal de Estudos" --platform=win32 --arch=x64 --electron-version=45.2.3 --out=saida --overwrite --asar --icon=icone.ico --app-version=${{ steps.ver.outputs.versao }} --prune=false --ignore="/node_modules" --ignore="/\.github" --ignore="/saida" --ignore="/pacote" --ignore="/README\.md" --ignore="/LICENSE" --ignore="/AVISOS-DE-TERCEIROS\.md" --ignore="/CHANGELOG\.md" --ignore="/LEIA-ME-pacote\.txt" --ignore="/notas\.md" --ignore="/instalador\.iss"
+
+      - name: Enxugar o pacote (só idiomas pt-BR e en-US; sem o compilador de WebGPU, que o app não usa)
+        shell: pwsh
+        run: |
+          $pasta = "saida/Arsenal de Estudos-win32-x64"
+          if (-not ((Test-Path "$pasta/locales/pt-BR.pak") -and (Test-Path "$pasta/locales/en-US.pak"))) { throw "faltam pt-BR.pak/en-US.pak" }
+          Get-ChildItem "$pasta/locales" -Filter *.pak | Where-Object { $_.Name -notin 'pt-BR.pak','en-US.pak' } | Remove-Item -Force
+          Remove-Item "$pasta/dxcompiler.dll" -Force -ErrorAction SilentlyContinue
+
+      - name: Montar o .zip e o SHA256SUMS
+        id: zip
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.versao }}"
+          $raiz = "pacote/Arsenal de Estudos"
+          New-Item -ItemType Directory -Force $raiz | Out-Null
+          Copy-Item "saida/Arsenal de Estudos-win32-x64" "$raiz/Programa" -Recurse
+          (Get-Content LEIA-ME-pacote.txt -Raw -Encoding utf8).Replace('{{versao}}', $v) | Set-Content "$raiz/LEIA-ME.txt" -Encoding utf8
+          Copy-Item LICENSE, AVISOS-DE-TERCEIROS.md $raiz
+          $nome = "Arsenal-de-Estudos-v$v.zip"
+          Compress-Archive -Path "pacote/Arsenal de Estudos" -DestinationPath $nome
+          $h = (Get-FileHash $nome -Algorithm SHA256).Hash.ToLower()
+          "$h  $nome" | Out-File SHA256SUMS.txt -Encoding ascii
+          "arquivo=$nome" >> $env:GITHUB_OUTPUT
+
+      - name: Instalar o Inno Setup
+        run: choco install innosetup --no-progress -y
+
+      - name: Montar o instalador
+        id: inst
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.versao }}"
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { throw "ISCC.exe nao encontrado" }
+          & $iscc /Qp "/DVersao=$v" "/DOrigem=$(Resolve-Path 'saida/Arsenal de Estudos-win32-x64')" "/DLeia=$(Resolve-Path 'pacote/Arsenal de Estudos/LEIA-ME.txt')" "/DIcone=$(Resolve-Path 'icone.ico')" "/DSaida=$(Resolve-Path '.')" instalador.iss
+          if ($LASTEXITCODE -ne 0) { throw "o Inno Setup falhou" }
+          $nome = "Arsenal-de-Estudos-Instalador-v$v.exe"
+          if (-not (Test-Path $nome)) { throw "o instalador nao foi gerado" }
+          $h = (Get-FileHash $nome -Algorithm SHA256).Hash.ToLower()
+          Add-Content SHA256SUMS.txt "$h  $nome" -Encoding ascii
+          "arquivo=$nome" >> $env:GITHUB_OUTPUT
+
+      - name: Registrar a origem dos arquivos (atestado de build)
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            ${{ steps.zip.outputs.arquivo }}
+            ${{ steps.inst.outputs.arquivo }}
+
+      - name: Publicar a versão
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" "${{ steps.inst.outputs.arquivo }}" "${{ steps.zip.outputs.arquivo }}" SHA256SUMS.txt --title "Arsenal de Estudos ${{ steps.ver.outputs.versao }}" --notes-file notas.md

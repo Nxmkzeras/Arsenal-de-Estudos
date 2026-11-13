@@ -1,0 +1,7 @@
+node_modules/
+saida/
+pacote/
+*.zip
+.claude/
+DIARIO.md
+CLAUDE.md

@@ -1,0 +1,60 @@
+ARSENAL DE ESTUDOS  v{{versao}}
+=====================================================
+
+#####################################################################################
+#                                                                                   #
+#   ATENCAO: NA PRIMEIRA VEZ QUE VOCE ABRIR, O WINDOWS VAI MOSTRAR UM AVISO AZUL:   #
+#                                                                                   #
+#                     "O WINDOWS PROTEGEU O COMPUTADOR"                             #
+#                                                                                   #
+#   ISSO E NORMAL E NAO E UM VIRUS. E SO PORQUE O PROGRAMA E NOVO E GRATUITO,       #
+#   E NAO TEM A ASSINATURA DIGITAL PAGA (CUSTA CENTENAS DE DOLARES POR ANO).        #
+#                                                                                   #
+#   COMO PASSAR (2 CLIQUES):                                                        #
+#     1) Clique em  "Mais informacoes"   (o texto pequeno no aviso)                 #
+#     2) Clique em  "Executar assim mesmo"                                          #
+#   Isso so acontece na primeira vez.                                               #
+#                                                                                   #
+#   QUER TER CERTEZA? Voce pode conferir antes de abrir:                            #
+#     - Mande o arquivo .zip para  https://www.virustotal.com  (e gratis): ele      #
+#       mostra o resultado de dezenas de antivirus.                                 #
+#     - O codigo-fonte e publico: qualquer pessoa pode ler tudo no GitHub.          #
+#     - O .zip e montado pelo proprio GitHub a partir desse codigo, e cada versao   #
+#       tem um codigo de conferencia (SHA-256) no README do projeto.                #
+#                                                                                   #
+#####################################################################################
+
+Aplicativo gratuito para Windows para organizar o estudo para concursos: edital (matérias e assuntos), ciclo de estudos, cronômetro,
+plano do dia, revisões espaçadas, caderno de erros e flashcards, pastas de questões, estatísticas, sons de foco, caneta e marca-texto
+por cima da tela e cronômetro fixo no canto.
+
+COMO ABRIR  (sem instalar nada, sem conta)
+  1. Extraia este .zip (botão direito > Extrair tudo...) para um lugar definitivo, como Documentos.
+     Não abra de dentro do .zip: extraia primeiro.
+  2. Entre na pasta "Programa" e dê dois cliques em "Arsenal de Estudos.exe".
+     (Dica: botão direito no .exe > Enviar para > Área de trabalho (criar atalho).)
+  3. O Windows VAI mostrar "O Windows protegeu o computador" (veja o quadro lá em cima). É normal e seguro:
+     clique em "Mais informações" > "Executar assim mesmo". Só aparece na primeira vez.
+     Se preferir, antes mande o .zip para https://www.virustotal.com e veja o resultado.
+
+PARA ESTUDAR O SEU CONCURSO
+  No primeiro acesso (ou em Ajustes > Carreira / edital) carregue o PDF do edital do seu concurso. O Arsenal lê as matérias e os
+  assuntos, mostra o resultado para você conferir e monta o ciclo, as pastas e as estatísticas. O edital do Banco do Brasil vem
+  só como exemplo. Há um tour guiado e o Guia (menu) explica cada tela.
+
+O QUE O PROGRAMA FAZ
+  - Funciona offline. Seus dados não saem do computador: não existe conta nem servidor.
+  - A única conexão que ele faz é consultar o GitHub para saber se há versão nova (dá para desligar em Ajustes). Quando há, ele mostra o
+    que mudou, faz um backup dos seus dados e só então atualiza, se você aceitar.
+  - Fechar a janela (X) só a esconde: o programa continua em segundo plano, com um ícone perto do relógio (clique para abrir).
+    Para fechar de vez: botão direito no ícone > Sair. Dá para desligar isso e iniciar o programa junto com o Windows em Ajustes.
+  - Alt+Shift+D mostra e esconde a camada de desenho sobre a tela.
+
+SEUS DADOS
+  Ficam só no seu computador (pasta %APPDATA%\Arsenal de Estudos - Publico), com uma cópia de segurança em disco.
+  Faça também o backup em Ajustes > Backup (escolha uma pasta, por exemplo dentro do OneDrive).
+
+LICENÇA
+  Gratuito para uso pessoal e de estudo. Código-fonte sob a PolyForm Noncommercial License 1.0.0 (sem uso comercial); veja o arquivo LICENSE do projeto.
+  Fontes: Bricolage Grotesque, Instrument Sans, Overpass Mono e Literata, sob a SIL Open Font License 1.1.
+  O programa usa Electron/Chromium (licenças MIT/BSD; veja LICENSE e LICENSES.chromium.html na pasta do programa).

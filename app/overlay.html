@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Desenhar na tela</title>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; font-family: "Segoe UI", system-ui, sans-serif; }
+  #tela { position: fixed; inset: 0; touch-action: none; cursor: crosshair; }
+  body.passa #tela { cursor: default; }
+  #borda { position: fixed; inset: 0; border: 3px solid rgba(245, 179, 1, .85); pointer-events: none; box-sizing: border-box; }
+  body.passa #borda { border: 3px dashed rgba(150, 156, 165, .8); }
+  #barra { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 6px 8px; background: #16181b; color: #e9e9e4; border: 1px solid #2c3036; border-radius: 14px; box-shadow: 0 12px 36px rgba(0,0,0,.4); }
+  #barra button { all: unset; box-sizing: border-box; min-width: 34px; height: 34px; padding: 0 8px; display: inline-grid; place-items: center; border-radius: 9px; cursor: pointer; color: #dfe1e4; background: #262a30; font: 700 12.5px "Segoe UI", sans-serif; }
+  #barra button:hover { background: #343941; }
+  #barra button.sel { background: #f5b301; color: #16181b; }
+  #barra button svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #barra .sep { width: 1px; height: 22px; background: #353a41; margin: 0 4px; }
+  #barra .cor { width: 22px; height: 22px; min-width: 22px; padding: 0; border-radius: 50%; border: 2px solid #16181b; box-shadow: 0 0 0 1px #4a4f57; }
+  #barra .cor.sel { box-shadow: 0 0 0 2px #f5b301; }
+  #barra .tam i { display: block; background: currentColor; border-radius: 50%; }
+  #aviso { position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%); background: #16181b; color: #fff; padding: 10px 16px; border-radius: 12px; font: 600 13px "Segoe UI", sans-serif; display: none; gap: 12px; align-items: center; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+  #aviso button { all: unset; cursor: pointer; background: #f5b301; color: #16181b; padding: 4px 10px; border-radius: 8px; font-weight: 700; }
+  #entrada { position: fixed; display: none; min-width: 120px; max-width: 60vw; padding: 2px 4px; font: 600 24px "Segoe UI", sans-serif; background: rgba(255,255,255,.85); border: 2px dashed #f5b301; outline: none; border-radius: 4px; }
+</style>
+</head>
+<body>
+<canvas id="tela"></canvas>
+<div id="borda"></div>
+<div id="barra" role="toolbar" aria-label="Ferramentas de desenho"></div>
+<div id="aviso" role="status"></div>
+<div id="entrada" contenteditable="true" role="textbox" aria-label="Texto"></div>
+<script src="js/desenho.js"></script>
+</body>
+</html>

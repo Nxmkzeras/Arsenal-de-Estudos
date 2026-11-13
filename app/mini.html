@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cronômetro</title>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; font-family: "Segoe UI", system-ui, sans-serif; }
+  #cartao { position: absolute; inset: 4px; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; align-items: center; column-gap: 8px; padding: 8px 10px 8px 14px; background: rgba(22, 24, 27, .94); color: #f0f0eb; border: 1px solid #2c3036; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.35); -webkit-app-region: drag; }
+  #tempo { font: 700 28px/1 "Segoe UI", sans-serif; letter-spacing: -.02em; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 8px; }
+  #ponto { width: 9px; height: 9px; border-radius: 50%; background: #6b7280; flex: none; }
+  .rodando #ponto { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.25); }
+  .pausado #ponto { background: #f5b301; }
+  #disc { grid-column: 1; font-size: 12px; color: #aeb3ba; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+  #acoes { grid-column: 2; grid-row: 1 / span 2; display: flex; align-items: center; gap: 4px; -webkit-app-region: no-drag; }
+  button { all: unset; cursor: pointer; display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #f5b301; color: #16181b; }
+  button:hover { filter: brightness(1.1); }
+  button.peq { width: 22px; height: 22px; background: transparent; color: #aeb3ba; }
+  button.peq:hover { background: #2c3036; color: #fff; }
+  #acoes .col { display: flex; flex-direction: column; gap: 2px; }
+  svg { width: 18px; height: 18px; fill: currentColor; }
+  button.peq svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; }
+</style>
+</head>
+<body>
+<div id="cartao" class="parado">
+  <div id="tempo"><i id="ponto"></i><span id="txt">00:00</span></div>
+  <div id="disc"></div>
+  <div id="acoes">
+    <button id="alterna" title="Iniciar / pausar" aria-label="Iniciar ou pausar o cronômetro"><svg id="ic" viewBox="0 0 24 24"><polygon points="7 4 20 12 7 20"/></svg></button>
+    <div class="col">
+      <button class="peq" id="menu" title="Opções" aria-label="Opções do cronômetro fixo"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button>
+      <button class="peq" id="fecha" title="Fechar o cronômetro fixo" aria-label="Fechar o cronômetro fixo"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+  </div>
+</div>
+<script src="js/mini.js"></script>
+</body>
+</html>
