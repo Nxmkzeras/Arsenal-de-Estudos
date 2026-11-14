@@ -1,7 +1,7 @@
 {
   "name": "arsenal-de-estudos",
   "productName": "Arsenal de Estudos",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Arsenal de Estudos para concursos: edital, plano do dia, cronômetro, revisões e caderno de erros. Tudo no seu computador.",
   "main": "main.js",
   "author": "Arsenal de Estudos",

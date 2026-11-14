@@ -48,7 +48,7 @@ Você não precisa confiar em mim: dá para conferir.
 
 ## Sugestões e problemas
 
-Use **Enviar feedback** no menu do aplicativo, ou abra uma [issue](https://github.com/Nxmkzeras/Arsenal-de-Estudos/issues/new) aqui no GitHub.
+Use **Enviar feedback** no menu do aplicativo, ou abra direto o [formulário de feedback](https://forms.gle/KbpLdbuvZWePJPhg8). Não precisa de cadastro.
 
 ## Apoie o projeto
 

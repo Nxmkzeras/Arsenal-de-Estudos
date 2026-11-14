@@ -2,6 +2,11 @@
 
 Cada versão tem uma seção "## <número>". O texto da seção da versão publicada é o que o próprio aplicativo mostra ao avisar da atualização.
 
+## 1.1.1
+
+### Feedback mais simples
+- A tela **Enviar feedback** agora abre um formulário simples no navegador, já com o seu texto. Não precisa criar conta em lugar nenhum, e a mensagem chega só para quem faz o Arsenal.
+
 ## 1.1.0
 
 ### Novidades

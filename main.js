@@ -458,6 +458,17 @@ const linkDoacao = () => {
     }
 };
 
+// Formulário do Google para feedback sem conta no GitHub ("formulario" no publicacao.json). Só aceita endereço do Google Forms.
+const linkFormulario = () => {
+    try {
+        const x = new URL(String(PUB.formulario || ""));
+        const google = x.hostname === "docs.google.com" && /^\/forms\//.test(x.pathname);
+        return x.protocol === "https:" && (google || x.hostname === "forms.gle") ? x.href : "";
+    } catch (e) {
+        return "";
+    }
+};
+
 const pastaAtu = () => path.join(dadosDir(), "atualizacao");
 
 const arqPendente = () => path.join(dadosDir(), "atualizacao-pendente.json");
@@ -549,6 +560,7 @@ let preparada = null;
 ipcMain.handle("pub:info", (() => ({
     repo: REPO_OK.test(String(PUB.repo || "")) ? PUB.repo : "",
     doacao: linkDoacao(),
+    formulario: linkFormulario(),
     empacotado: app.isPackaged,
     versao: app.getVersion()
 })));
