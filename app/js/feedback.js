@@ -109,7 +109,7 @@
             }
         });
         contato.value = st.contato;
-        const tec = h("input", {
+        const caixaVersao = h("input", {
             type: "checkbox",
             checked: true,
             onchange: ev => {
@@ -172,7 +172,7 @@
             class: "row small"
         }, h("span", {
             class: "switch"
-        }, tec, h("span")), "Incluir a versão do app e do Windows (ajuda a achar problemas)"), h("div", {
+        }, caixaVersao, h("span")), "Incluir a versão do app e do Windows (ajuda a achar problemas)"), h("div", {
             class: "row wrap"
         }, h("button", {
             class: "btn primary",
